@@ -1,0 +1,126 @@
+- To compile typescript: npx tsc fileName.ts
+
+// Union type
+let userID: string | number = "abc1";
+
+// type alias - it is used to create custom types so that we can reuse
+// It is also knowkn as Custom Types
+Ex:
+type StringOrNum = string | number;
+
+type User = {
+    name: string;
+    age: number;
+    isAdmin: boolean;
+    id: string | number;
+}
+
+type AddFun = (a: number, b: number) => number
+
+// Interface types mostly used for create object types
+interface Credentials {
+    password: string;
+    email: string;
+}
+
+Interface VS Custom Type:
+- In general we mostly use Custom type
+- Interface is more limited because it is basically limited to object types.
+- You can actualy use "interface" to also define function types but you, for example, can't use "interface" to store a union type(which you can with "type")
+- You can create same name interface without any error.
+EX: 
+interface Credentials {
+    password: string;
+    email: string;
+}
+interface Credentials {
+    mode: string;
+}
+
+// Merging types
+type Admin = {
+    permissions: string[]
+}
+type AppUser = {
+    userName: string
+}
+type AppAdmin = Admin & AppUser
+
+// Mergin Interface
+interface Admin {
+    permissions: string[]
+}
+interface AppUser {
+    userName: string
+}
+interface AppAdmin extends Admin, AppUser {
+    // write anything extra needs to add or keep it empty
+}
+let admin: AppAdmin;
+admin = {
+    permissions: ["login"],
+    userName: "sanu"
+}
+
+// Specific string types or any types
+let role: 'admin';
+role = 'admin';
+// role = 'sag' // wrong
+
+// For more specific types
+let role1: 'admin' | 'user' | 'editor' | 1;
+role1 = 'admin';
+role1 = 'user';
+
+
+// Type Guards by using union types
+type Role = 'admin' | 'user' | 'editor' | 1;
+function performAction(action: string, role: Role) {
+    if(role === 'admin' && typeof admin === "string"){  // here as role as union types so you can add some conditions
+        // ...
+    }
+ }
+
+// GENERIC TYPES
+- Generic types are types that work together with another type.
+- "Works Together" simply means that a type (like "Array") needs extra information(e.g., the type of the values that should be stored in the array)
+Ex: let roles: Array<Role>
+
+- You define them once but in a flexible way and then you can use them in conjunction with specific other types in different places
+
+React With Typescript:
+=====================
+import React, { type ReactNode } from 'react';  // Here ReactNode is not an object or a function or anything like that we can use. Instead it is a type. That's why it is a good practice to use "type"
+
+Ex: children: ReactNode // "ReactNode" is used in case of children method and is coming from react-ts-library
+
+// "FormEvent" is used in case of onSubmit method and is coming from react-ts-library
+Ex: const handleSubmit = (e: FormEvent) => {    
+    e?.preventDefault();
+  };
+
+// "FormEvent" is a generic type and "HTMLFormElement" is DOM base types and is required to handle form input
+Ex: const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+  };
+
+ - Discriminated Unions:
+ Ex: 
+ type HintBoxProps = {
+  mode: "hint";
+  children: ReactNode;
+};
+type WarningBoxProps = {
+  mode: "warning";
+  severity: "low" | "medium" | "high";
+  children: ReactNode;
+};
+
+type InfoBoxProps = HintBoxProps | WarningBoxProps;
+
+- Wrapper Component with ComponentPropsWithoutRef
+Ex:
+type InputProps = {
+    label: string;
+    id: string;
+} & ComponentPropsWithoutRef<"input">       // It is mostly used for all the default props we have for Input elements.
